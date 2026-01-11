@@ -3,9 +3,10 @@
 This project deploys the [traefik/whoami](https://hub.docker.com/r/traefik/whoami) application in a Kubernetes cluster, exposed via an Ingress resource. The `whoami` app is a simple web server that returns details about the HTTP request, useful for testing ingress configurations.
 
 ## Features
-- Kubernetes Deployment with resource limits and health probes.
-- Service exposing ports 80 (HTTP) and 443 (HTTPS).
+- Kubernetes Deployment with resource limits, health probes, and security context (runs as non-root user).
+- Service exposing ports 80 (HTTP) and 443 (HTTPS) with Prometheus annotations.
 - Ingress routing traffic to `/foo` and `/bar` paths.
+- ServiceMonitor for Prometheus monitoring (requires Prometheus Operator).
 - Compatible with both Traefik and NGINX Ingress Controllers.
 
 ## Prerequisites
@@ -23,7 +24,7 @@ This project deploys the [traefik/whoami](https://hub.docker.com/r/traefik/whoam
 
 2. Apply the manifests:
    ```bash
-   kubectl apply -f whoami.deployment.yml -f whoami.service.yml -f whoami.ingress.yml
+   kubectl apply -f whoami.deployment.yml -f whoami.service.yml -f whoami.ingress.yml -f whoami.servicemonitor.yml
    ```
 
 3. Verify the deployment:
@@ -51,5 +52,7 @@ kubectl delete namespace whoami
 ## Notes
 - The deployment uses the `latest` tag for the image; pin to a specific version for production.
 - Health probes ensure the pod is ready and alive.
-- For production, consider adding security contexts, network policies, and monitoring.</content>
+- Security context runs the container as a non-root user for better security.
+- Monitoring is set up via ServiceMonitor for Prometheus (if using Prometheus Operator). Note: The `whoami` app does not expose a `/metrics` endpoint by default, so metrics scraping may not work without additional configuration.
+- For production, consider adding network policies and further hardening.</content>
 <parameter name="filePath">/Volumes/M2.SSD/Github/Projects/whoami-ingress/README.md
