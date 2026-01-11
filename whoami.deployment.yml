@@ -6,6 +6,9 @@ metadata:
   labels:
     app: traefiklabs
     name: whoami
+    app.kubernetes.io/name: whoami
+    app.kubernetes.io/component: backend
+    app.kubernetes.io/version: latest
 spec:
   replicas: 1
   selector:
@@ -17,18 +20,25 @@ spec:
       labels:
         app: traefiklabs
         task: whoami
+        app.kubernetes.io/name: whoami
+        app.kubernetes.io/component: backend
+        app.kubernetes.io/version: latest
     spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
       containers:
         - name: whoami
           image: traefik/whoami:latest
           imagePullPolicy: IfNotPresent
           resources:
            limits:
-             memory: 128Mi
-             cpu: 150m
+             memory: 256Mi
+             cpu: 200m
            requests:
-             memory: 192Mi
-             cpu: 300m
+             memory: 128Mi
+             cpu: 100m
           ports:
             - containerPort: 80
             - containerPort: 443
